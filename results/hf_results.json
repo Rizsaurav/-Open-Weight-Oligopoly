@@ -1,0 +1,579 @@
+{
+ "n": 20000,
+ "A1_descriptives": {
+  "n": 20000,
+  "total_downloads": 2835223827,
+  "median": 6718.5,
+  "q25": 3261.75,
+  "q75": 27479.0,
+  "mean": 141761.19135,
+  "max": 242757705,
+  "max_id": "sentence-transformers/all-MiniLM-L6-v2",
+  "gini": 0.9182,
+  "top100_share": 0.4844,
+  "top1000_share": 0.812,
+  "pct_zero": 0.0
+ },
+ "A2_org_concentration": {
+  "n_orgs": 4144,
+  "hhi_downloads": 375.0,
+  "cr1": 0.1199,
+  "cr4": 0.3275,
+  "cr10": 0.4772,
+  "top10": [
+   {
+    "org": "sentence-transformers",
+    "models": 66,
+    "downloads": 339894578,
+    "share": 0.1199
+   },
+   {
+    "org": "Qwen",
+    "models": 312,
+    "downloads": 296011816,
+    "share": 0.1044
+   },
+   {
+    "org": "BAAI",
+    "models": 34,
+    "downloads": 152501848,
+    "share": 0.0538
+   },
+   {
+    "org": "google",
+    "models": 248,
+    "downloads": 140026994,
+    "share": 0.0494
+   },
+   {
+    "org": "cross-encoder",
+    "models": 31,
+    "downloads": 100287358,
+    "share": 0.0354
+   },
+   {
+    "org": "Comfy-Org",
+    "models": 87,
+    "downloads": 82917785,
+    "share": 0.0292
+   },
+   {
+    "org": "unsloth",
+    "models": 594,
+    "downloads": 65252240,
+    "share": 0.023
+   },
+   {
+    "org": "openai",
+    "models": 24,
+    "downloads": 63941670,
+    "share": 0.0226
+   },
+   {
+    "org": "facebook",
+    "models": 305,
+    "downloads": 59771633,
+    "share": 0.0211
+   },
+   {
+    "org": "google-bert",
+    "models": 13,
+    "downloads": 52459563,
+    "share": 0.0185
+   }
+  ]
+ },
+ "A3_params": {
+  "detail_n": 2000,
+  "params_coverage_full": 0.0619,
+  "params_coverage_detail": 0.6185,
+  "n_params": 1237,
+  "median_params": 1017626722.0,
+  "q25": 134734080.0,
+  "q75": 8953801728.0,
+  "max_params": 2779931837184,
+  "max_params_id": "moonshotai/Kimi-K3",
+  "gini_params": 0.9021,
+  "median_params_by_year": {
+   "2022": 124360974.5,
+   "2023": 164144128.0,
+   "2024": 1100048384.0,
+   "2025": 2906632936.0,
+   "2026": 11959730224.0
+  },
+  "top10_params_share": 0.296
+ },
+ "A4_license_by_year": {
+  "2022": {
+   "copyleft": 0.0238,
+   "other": 0.0243,
+   "permissive": 0.6283,
+   "restrictive": 0.0442,
+   "unspecified": 0.2793
+  },
+  "2023": {
+   "copyleft": 0.0168,
+   "other": 0.0939,
+   "permissive": 0.5022,
+   "restrictive": 0.2251,
+   "unspecified": 0.162
+  },
+  "2024": {
+   "copyleft": 0.0055,
+   "other": 0.1228,
+   "permissive": 0.4697,
+   "restrictive": 0.2063,
+   "unspecified": 0.1957
+  },
+  "2025": {
+   "copyleft": 0.0063,
+   "other": 0.1002,
+   "permissive": 0.6283,
+   "restrictive": 0.0774,
+   "unspecified": 0.1878
+  },
+  "2026": {
+   "copyleft": 0.0046,
+   "other": 0.1465,
+   "permissive": 0.6788,
+   "restrictive": 0.0523,
+   "unspecified": 0.1178
+  }
+ },
+ "A5_ols_full": {
+  "n": 20000,
+  "r2": 0.148,
+  "adj_r2": 0.147,
+  "params": {
+   "const": {
+    "coef": 8.4327,
+    "se": 0.0491,
+    "p": 0.0
+   },
+   "org_type_corporate": {
+    "coef": 1.2593,
+    "se": 0.0465,
+    "p": 0.0
+   },
+   "org_type_research": {
+    "coef": 0.8842,
+    "se": 0.1096,
+    "p": 0.0
+   },
+   "license_class_copyleft": {
+    "coef": -0.2619,
+    "se": 0.124,
+    "p": 0.0347
+   },
+   "license_class_restrictive": {
+    "coef": -0.374,
+    "se": 0.0339,
+    "p": 0.0
+   },
+   "license_class_other": {
+    "coef": -0.2546,
+    "se": 0.0356,
+    "p": 0.0
+   },
+   "license_class_unspecified": {
+    "coef": -0.0787,
+    "se": 0.0294,
+    "p": 0.0073
+   },
+   "tag_group_other": {
+    "coef": 0.7869,
+    "se": 0.035,
+    "p": 0.0
+   },
+   "tag_group_feature-extraction": {
+    "coef": 1.008,
+    "se": 0.0871,
+    "p": 0.0
+   },
+   "tag_group_text-generation": {
+    "coef": 0.3988,
+    "se": 0.0272,
+    "p": 0.0
+   },
+   "tag_group_image-classification": {
+    "coef": 0.4617,
+    "se": 0.0703,
+    "p": 0.0
+   },
+   "tag_group_image-text-to-text": {
+    "coef": 0.9203,
+    "se": 0.0444,
+    "p": 0.0
+   },
+   "tag_group_text-classification": {
+    "coef": 0.7768,
+    "se": 0.0745,
+    "p": 0.0
+   },
+   "tag_group_automatic-speech-recognition": {
+    "coef": 1.3295,
+    "se": 0.0901,
+    "p": 0.0
+   },
+   "tag_group_text-to-image": {
+    "coef": 0.5769,
+    "se": 0.0583,
+    "p": 0.0
+   },
+   "tag_group_token-classification": {
+    "coef": 1.5124,
+    "se": 0.0524,
+    "p": 0.0
+   },
+   "log_age": {
+    "coef": 0.0681,
+    "se": 0.0082,
+    "p": 0.0
+   }
+  }
+ },
+ "A5_ols_params": {
+  "n": 1237,
+  "r2": 0.126,
+  "adj_r2": 0.114,
+  "params": {
+   "const": {
+    "coef": 13.0855,
+    "se": 0.386,
+    "p": 0.0
+   },
+   "org_type_corporate": {
+    "coef": 0.5144,
+    "se": 0.0679,
+    "p": 0.0
+   },
+   "org_type_research": {
+    "coef": 0.8841,
+    "se": 0.2033,
+    "p": 0.0
+   },
+   "license_class_copyleft": {
+    "coef": -0.9563,
+    "se": 0.066,
+    "p": 0.0
+   },
+   "license_class_restrictive": {
+    "coef": -0.2336,
+    "se": 0.1061,
+    "p": 0.0276
+   },
+   "license_class_other": {
+    "coef": -0.2613,
+    "se": 0.0901,
+    "p": 0.0037
+   },
+   "license_class_unspecified": {
+    "coef": -0.2986,
+    "se": 0.1037,
+    "p": 0.004
+   },
+   "tag_group_other": {
+    "coef": 0.3494,
+    "se": 0.1136,
+    "p": 0.0021
+   },
+   "tag_group_feature-extraction": {
+    "coef": 0.4552,
+    "se": 0.2117,
+    "p": 0.0316
+   },
+   "tag_group_text-generation": {
+    "coef": 0.2979,
+    "se": 0.1107,
+    "p": 0.0071
+   },
+   "tag_group_image-classification": {
+    "coef": 0.2194,
+    "se": 0.2126,
+    "p": 0.3021
+   },
+   "tag_group_image-text-to-text": {
+    "coef": 0.3725,
+    "se": 0.1226,
+    "p": 0.0024
+   },
+   "tag_group_text-classification": {
+    "coef": 0.197,
+    "se": 0.2062,
+    "p": 0.3392
+   },
+   "tag_group_automatic-speech-recognition": {
+    "coef": 0.4336,
+    "se": 0.1552,
+    "p": 0.0052
+   },
+   "tag_group_text-to-image": {
+    "coef": 0.544,
+    "se": 0.2146,
+    "p": 0.0113
+   },
+   "tag_group_token-classification": {
+    "coef": -0.3861,
+    "se": 0.1359,
+    "p": 0.0045
+   },
+   "log_age": {
+    "coef": 0.0226,
+    "se": 0.0334,
+    "p": 0.4996
+   },
+   "log_params": {
+    "coef": -0.0252,
+    "se": 0.0125,
+    "p": 0.0432
+   }
+  }
+ },
+ "A6_logistic": {
+  "n": 20000,
+  "threshold": 142251,
+  "breakout_rate": 0.1,
+  "pseudo_r2": 0.092,
+  "odds_ratios": {
+   "const": {
+    "or": 0.022,
+    "ci95": [
+     0.017,
+     0.03
+    ],
+    "p": 0.0
+   },
+   "org_type_corporate": {
+    "or": 3.893,
+    "ci95": [
+     3.45,
+     4.393
+    ],
+    "p": 0.0
+   },
+   "org_type_research": {
+    "or": 2.403,
+    "ci95": [
+     1.871,
+     3.088
+    ],
+    "p": 0.0
+   },
+   "license_class_copyleft": {
+    "or": 0.652,
+    "ci95": [
+     0.358,
+     1.187
+    ],
+    "p": 0.1616
+   },
+   "license_class_restrictive": {
+    "or": 0.505,
+    "ci95": [
+     0.42,
+     0.608
+    ],
+    "p": 0.0
+   },
+   "license_class_other": {
+    "or": 0.578,
+    "ci95": [
+     0.487,
+     0.686
+    ],
+    "p": 0.0
+   },
+   "license_class_unspecified": {
+    "or": 0.837,
+    "ci95": [
+     0.722,
+     0.97
+    ],
+    "p": 0.0184
+   },
+   "tag_group_other": {
+    "or": 2.853,
+    "ci95": [
+     2.427,
+     3.355
+    ],
+    "p": 0.0
+   },
+   "tag_group_feature-extraction": {
+    "or": 3.29,
+    "ci95": [
+     2.484,
+     4.356
+    ],
+    "p": 0.0
+   },
+   "tag_group_text-generation": {
+    "or": 2.081,
+    "ci95": [
+     1.777,
+     2.438
+    ],
+    "p": 0.0
+   },
+   "tag_group_image-classification": {
+    "or": 1.206,
+    "ci95": [
+     0.847,
+     1.717
+    ],
+    "p": 0.2996
+   },
+   "tag_group_image-text-to-text": {
+    "or": 4.113,
+    "ci95": [
+     3.424,
+     4.942
+    ],
+    "p": 0.0
+   },
+   "tag_group_text-classification": {
+    "or": 2.603,
+    "ci95": [
+     1.913,
+     3.541
+    ],
+    "p": 0.0
+   },
+   "tag_group_automatic-speech-recognition": {
+    "or": 5.765,
+    "ci95": [
+     4.532,
+     7.333
+    ],
+    "p": 0.0
+   },
+   "tag_group_text-to-image": {
+    "or": 1.696,
+    "ci95": [
+     1.178,
+     2.442
+    ],
+    "p": 0.0045
+   },
+   "tag_group_token-classification": {
+    "or": 1.734,
+    "ci95": [
+     1.291,
+     2.327
+    ],
+    "p": 0.0003
+   },
+   "log_age": {
+    "or": 1.132,
+    "ci95": [
+     1.082,
+     1.185
+    ],
+    "p": 0.0
+   }
+  }
+ },
+ "A7_cv": {
+  "rf_auc_mean": 0.723,
+  "rf_auc_sd": 0.012,
+  "lr_auc_mean": 0.716,
+  "lr_auc_sd": 0.012,
+  "chance_auc": 0.5,
+  "majority_acc": 0.9,
+  "n_folds": 50,
+  "rf_importance_top8": {
+   "log_age": 0.826,
+   "org_type_corporate": 0.063,
+   "tag_group_automatic-speech-recognition": 0.015,
+   "license_class_unspecified": 0.012,
+   "tag_group_image-text-to-text": 0.012,
+   "license_class_other": 0.012,
+   "tag_group_other": 0.011,
+   "license_class_restrictive": 0.011
+  }
+ },
+ "A8_kmeans": {
+  "silhouette": {
+   "2": 0.263,
+   "3": 0.271,
+   "4": 0.292,
+   "5": 0.275,
+   "6": 0.284
+  },
+  "chosen_k": 4,
+  "best_k": 4,
+  "sizes": {
+   "0": 3725,
+   "1": 6239,
+   "2": 3445,
+   "3": 6591
+  },
+  "medians": {
+   "0": {
+    "log_downloads": 9.154,
+    "log_likes": 2.89,
+    "age_years": 3.439,
+    "log_org_models": 2.079,
+    "breakout": 0.0
+   },
+   "1": {
+    "log_downloads": 8.509,
+    "log_likes": 1.609,
+    "age_years": 0.465,
+    "log_org_models": 1.386,
+    "breakout": 0.0
+   },
+   "2": {
+    "log_downloads": 11.695,
+    "log_likes": 4.82,
+    "age_years": 1.169,
+    "log_org_models": 3.989,
+    "breakout": 0.0
+   },
+   "3": {
+    "log_downloads": 8.243,
+    "log_likes": 0.693,
+    "age_years": 1.514,
+    "log_org_models": 6.666,
+    "breakout": 0.0
+   }
+  }
+ },
+ "A9_temporal": {
+  "models_per_quarter": {
+   "2022-Q1": 1205,
+   "2022-Q2": 170,
+   "2022-Q3": 139,
+   "2022-Q4": 294,
+   "2023-Q1": 308,
+   "2023-Q2": 395,
+   "2023-Q3": 513,
+   "2023-Q4": 574,
+   "2024-Q1": 725,
+   "2024-Q2": 1385,
+   "2024-Q3": 1893,
+   "2024-Q4": 898,
+   "2025-Q1": 962,
+   "2025-Q2": 1115,
+   "2025-Q3": 1490,
+   "2025-Q4": 1203,
+   "2026-Q1": 1392,
+   "2026-Q2": 1972,
+   "2026-Q3": 3367
+  },
+  "top10_org_share_by_year": {
+   "2022": 0.7862,
+   "2023": 0.6949,
+   "2024": 0.5504,
+   "2025": 0.6422,
+   "2026": 0.5374
+  },
+  "median_downloads_by_year": {
+   "2022": 16890.0,
+   "2023": 7155.0,
+   "2024": 4613.0,
+   "2025": 10291.5,
+   "2026": 5992.0
+  }
+ }
+}

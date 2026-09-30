@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+
+# Raw API dumps (regenerable via pipeline/01_collect.py and 02_collect_detail.py)
+data/raw_detail/
+data/raw_pages/
+
+.DS_Store

@@ -1,0 +1,356 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{times}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{float}
+\setlength{\textfloatsep}{6pt}
+\setlength{\intextsep}{6pt}
+\setlength{\abovecaptionskip}{4pt}
+
+% exact page geometry per specification (US Letter)
+\setlength{\paperwidth}{8.5in}
+\setlength{\paperheight}{11in}
+\setlength{\textwidth}{7.0in}        % 2 x 3.5in columns
+\setlength{\textheight}{9.25in}       % 11 - 0.75 top - 1.0 bottom
+\setlength{\columnsep}{0.25in}
+\setlength{\oddsidemargin}{-0.375in}  % 1in - 0.375in = 0.625in left
+\setlength{\evensidemargin}{-0.375in}
+\setlength{\topmargin}{-0.25in}       % 1in - 0.25in = 0.75in top
+\setlength{\headheight}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\footskip}{0.5in}
+\setlength{\parindent}{0.2in}
+\setlength{\parskip}{0pt}
+\pagestyle{empty}
+
+% balance the two columns on the final page
+\IEEEtriggeratref{9}
+\begin{document}
+
+\title{\fontsize{24}{28}\selectfont The Open-Weight Oligopoly: Measuring
+Concentration and Adoption in the Hugging Face Model Ecosystem}
+
+\author{\IEEEauthorblockN{\fontsize{11}{13}\selectfont Saurav Rijal}
+\IEEEauthorblockA{\fontsize{10}{12}\selectfont\textit{Department of Computer
+Science, Texas State University}\\ San Marcos, TX, USA\\
+sauravrijal@txstate.edu}
+}
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+We audit concentration and adoption in the Hugging Face model ecosystem from a reproducible snapshot of the 20,000 most-downloaded models on the public Hub API, with full metadata for the top 2,000. Downloads are extraordinarily concentrated across models (Gini $0.92$) but not across publishers (4,144 organizations; HHI $375$): a handful of artifacts absorb most usage while thousands of publishers compete. Controlling for publisher, license, and task, larger models are downloaded slightly \emph{less}, while corporate publishers and research labs substantially outperform community accounts and restrictive licenses underperform permissive ones. Breakout models are modestly predictable from metadata alone (AUC $0.72$), with model age the dominant feature, and $k$-means separates breakout flagships from an aging mid-tier and two long tails. Cohort analysis shows the top-ten publishers' download share falling from $79\%$ (2022) to $54\%$ (2026) even as median model size rose roughly a hundredfold. The open-weight ecosystem is thus a model-level oligopoly inside an organizationally competitive market: open weights do not imply decentralized influence.
+\end{abstract}
+
+\begin{IEEEkeywords}
+open-weight models, Hugging Face, market concentration, technology adoption,
+machine learning, open source AI
+\end{IEEEkeywords}
+
+\section{Introduction}
+The Hugging Face Hub has become the default public registry for open-weight
+artificial intelligence models, hosting millions of model repositories that
+underpin research, startups, and production systems worldwide. ``Open
+weights'' now sit at the center of AI policy debates, capability-diffusion
+arguments, and the business models of the largest AI labs. Yet the openness
+of the \emph{artifact} (weights anyone may download) should not be confused
+with the openness of the \emph{ecosystem}: who publishes the models everyone
+actually uses, and what separates the handful of breakout models from the
+long tail nobody downloads?
+
+This paper audits the Hub's model ecosystem with its own public data. We
+collect the 20,000 most-downloaded models via the Hub's REST API on September
+29, 2026, and fetch full metadata, including parameter counts, for the top
+2,000. We ask: (i) how concentrated are downloads across models and
+organizations? (ii) does the ecosystem centralize or diversify over time?
+(iii) what attributes (organization type, license class, age, task, model
+size) predict adoption, and can breakout models be predicted from metadata
+alone? (iv) do models fall into natural archetypes, and where does licensing
+fit in?
+
+Our contributions are a reproducible ingest--clean--model pipeline over the
+public Hub API with assertion-gated collection; concentration measurement
+with the Gini coefficient and the Herfindahl--Hirschman Index (HHI); an
+ordinary least squares (OLS) attribution of downloads with robust inference;
+a head-to-head comparison of logistic regression and random-forest breakout
+classifiers under repeated cross-validation; a validated $k$-means
+segmentation of model archetypes; and a cohort analysis of centralization and
+licensing since 2022. The headline finding is that the open-weight ecosystem
+is, by downloads, an oligopoly: a tiny fraction of models and organizations
+captures the overwhelming majority of usage, and breakout adoption is
+predictable from a few structural features.
+
+\section{Related Work}
+The most directly comparable study is the recent ``Economies of Open
+Intelligence'' analysis, which reconstructs the complete history of weekly
+Hub downloads from June 2020 to August 2025 across 851,000 models and
+documents a rebalancing of power from US industry labs toward unaffiliated
+developers, community organizations, and Chinese industry \cite{econ-open-intel}.
+That work studies the full population over time; we study a current snapshot
+of the top 20,000 models by trailing-30-day downloads and add inferential and
+predictive modeling of what \emph{explains} and \emph{predicts} adoption at the
+top of the distribution, which the historical census does not attempt.
+
+A systematic literature review with quantitative validation examines claims
+about Hugging Face popularity, defining popularity by downloads and studying
+the top 1,000 models across snapshots \cite{hf-lit-review}. Our sample is
+twenty times larger, uses current data, and adds concentration indices plus
+machine-learning classifiers rather than claim validation alone. Licensing on
+the Hub has been studied empirically with attention to documentation and
+supply-chain challenges, including a manual audit of ``Other''-licensed
+models \cite{hf-licensing}; we instead treat license class as a structured
+covariate in adoption models and track its composition over time. Recent work
+on public application transformation through Model--Space links finds that
+downstream reuse is highly concentrated among few models and that downloads,
+likes, and reuse capture distinct facets of impact \cite{hf-reuse}, a finding
+our download-concentration results corroborate from the artifact side. None of
+these joins concentration measurement with predictive modeling of breakout
+adoption on a current top-of-Hub sample, which is the gap this paper fills.
+
+\section{Methodology}
+\subsection{Data Sources}
+Model listings come from the public Hugging Face Hub REST API
+(\texttt{huggingface.co/api/models}), queried without authentication on
+September 29, 2026 \cite{hf-api}. We page through \texttt{limit=100},
+\texttt{sort=downloads}, \texttt{direction=-1} with cursor pagination for 200
+pages, yielding the 20,000 models with the highest trailing-30-day download
+counts. The \texttt{downloads} field is the rolling 30-day count, distinct
+from the cumulative \texttt{downloadsAllTime} available only on request
+\cite{hf-hub-docs}; every ``download'' below means trailing-30-day downloads
+unless stated otherwise. For the top 2,000 models by downloads we fetch the
+per-model detail endpoint, which adds the \texttt{safetensors.total}
+parameter count, the author field, and gating status.
+
+\subsection{Cleaning and Feature Engineering}
+The publisher is parsed as the \texttt{org/model} id prefix (legacy
+single-component ids keep the id as their own org). Organization type is
+author-coded from public knowledge into \emph{corporate} (for-profit
+companies and their labs), \emph{research} (academic and nonprofit labs), and
+\emph{community} (individuals and community converter/quantization groups);
+uncoded orgs default to community, and the full mapping is fixed in the
+pipeline. License class is rule-parsed from \texttt{license:*} tags, first
+match in order: \emph{restrictive} (behavioral-use: \texttt{openrail*},
+\texttt{llama*}, \texttt{gemma}, non-commercial, \texttt{apple-amlr},
+\texttt{openmdw}), \emph{copyleft} (\texttt{gpl*}, \texttt{agpl*},
+\texttt{cc-by-sa*}), \emph{permissive} (\texttt{apache-2.0}, \texttt{mit},
+\texttt{bsd-*}, \texttt{cc-by-*}, \texttt{cc0}, \texttt{wtfpl},
+\texttt{unlicense}), \emph{other} (any remaining license tag), and
+\emph{unspecified} (no license tag). Model age is measured in days from
+\texttt{createdAt} to collection; task comes from \texttt{pipeline\_tag}
+(69.6\% coverage); parameter counts cover the detail subsample and are
+reported with coverage everywhere they are used.
+
+\subsection{Models}
+M1 measures download concentration: the Gini coefficient over models and the
+HHI over organization download shares,
+\begin{equation}
+\mathrm{HHI} = 10000 \sum_j s_j^2,
+\end{equation}
+where $s_j$ is org $j$'s share of sample downloads, alongside CR1/CR4/CR10.
+M2 is an OLS regression of $\log(\mathrm{downloads})$ on organization type,
+license class, $\log(\mathrm{age})$, and task indicators (top tasks plus
+other), with HC3 heteroskedasticity-robust standard errors; a second
+specification on the detail subsample adds $\log(\mathrm{parameters})$.
+M3 is a logistic regression for $P(\mathrm{breakout})$, where breakout means
+downloads at or above the sample 90th percentile, reporting odds ratios with
+95\% confidence intervals and $p$-values. M4 is a random-forest breakout
+classifier (400 trees) compared honestly against the logistic model by
+repeated stratified 5-fold cross-validation (10 repeats, 50 folds), reporting
+mean $\pm$ SD area under the curve (AUC) against a majority-class baseline.
+M5 is $k$-means on standardized $[\log \mathrm{downloads}, \log \mathrm{likes},
+\mathrm{age}, \log \mathrm{org\ size}]$ with silhouette validation over
+$k=2,\dots,6$. Every pipeline script is assertion-gated and exits nonzero on
+any data mismatch.
+
+\section{Results}
+\subsection{Download concentration}
+The 20,000 models accumulated 2,835,223,827 trailing-30-day downloads
+(median 6,719, mean 141,761, maximum 242,757,705 for
+sentence-transformers/all-MiniLM-L6-v2). The download Gini coefficient is 0.9182, and the
+top 100 models capture 48.4\% of sample downloads while the top
+1,000 capture 81.2\%; Fig.~\ref{fig:lorenz} shows the Lorenz
+curve. Table~\ref{tab:descriptives} summarizes the sample.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig1_lorenz.png}
+\caption{Lorenz curve of trailing-30-day downloads across the 20,000 sampled
+models (Gini 0.9182). The dashed line is perfect equality.}
+\label{fig:lorenz}
+\end{figure}
+
+\input{tables/t1_descriptives}
+
+Aggregating downloads by publisher, 4,144 organizations appear in
+the sample. The largest, sentence-transformers, holds 12.0\% of downloads;
+the top 4 hold 32.7\% and the top 10 47.7\%
+(Table~\ref{tab:toporgs}, Fig.~\ref{fig:toporgs}). The HHI is 375,
+which sits below the 1,500 ``moderately concentrated'' threshold
+used in merger review \cite{doj-hhi}: by downloads, no single publisher
+dominates, but the model-level distribution is far more concentrated than the
+organization-level one.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig2_orgs.png}
+\caption{Top ten organizations by share of sample downloads (trailing 30
+days).}
+\label{fig:toporgs}
+\end{figure}
+
+\input{tables/t2_toporgs}
+\input{tables/t3_hhi}
+
+\subsection{Parameter scale}
+Parameter counts are available for 1,237 of the top 2,000
+models (61.9\% of the detail subsample, 6.2\% of the full frame). The median model has 1.02~billion parameters; the parameter Gini
+is 0.9021 and the ten largest models hold 29.6\% of
+subsample parameters. Median size rises from 124~million in 2022 to 12.0~billion in 2026 (Fig.~\ref{fig:temporal}).
+
+\subsection{What predicts downloads}
+Table~\ref{tab:ols} reports the full-sample OLS for $\log(\mathrm{downloads})$
+($R^2=0.148$, $n=20{,}000$). Relative to community publishers,
+corporate orgs average $e^{1.26}\approx 3.5\times$ the downloads of community orgs and research orgs $e^{0.88}\approx 2.4\times$ as many (both $p<0.001$); relative to permissive licenses,
+restrictive (behavioral-use) licenses sit 31\% lower ($\hat\beta=-0.374$, $p<0.001$) and unspecified licenses 8\% lower. Older models accumulate more downloads
+(elasticity $0.068$, $p<0.001$). On the detail subsample,
+$\log(\mathrm{parameters})$ enters with elasticity $-0.025$ ($p=0.043$), and $R^2$ falls to $0.126$ (Table~\ref{tab:olsparams}).
+
+\input{tables/t4_ols}
+\input{tables/t5_ols_params}
+
+\subsection{Predicting breakout models}
+The breakout threshold (90th percentile) is 142,251 downloads.
+Table~\ref{tab:logit} gives odds ratios: corporate publishers have $3.89\times$ the odds of breakout versus community (95\% CI $[3.45, 4.39]$, $p<0.001$), research publishers $2.40\times$; restrictive licenses cut the odds roughly in half (OR $0.51$, CI $[0.42, 0.61]$); speech-recognition and image-text-to-text models have the highest task odds (OR $5.77$ and $4.11$). Under repeated stratified 5-fold CV
+(10 repeats), the random forest reaches AUC $0.723\pm0.012$ versus $0.716\pm0.012$ for logistic regression, both well above the 0.50 chance level (Table~\ref{tab:cv}); i.e.\ breakout status is modestly but reliably predictable from metadata alone, with the forest only marginally ahead of the linear model. The most important features are
+model age dominates ($0.83$ importance), followed by corporate publisher status ($0.06$) (Fig.~\ref{fig:rf}), and the breakout rate is highest among corporate publishers at $27.0\%$ versus $7.6\%$ for community.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig3_rf.png}
+\caption{Top: top random-forest features for breakout prediction
+(400 trees). Bottom: breakout rate (share of models above the 90th percentile
+of downloads) by organization type.}
+\label{fig:rf}
+\end{figure}
+
+\input{tables/t6_logistic}
+\input{tables/t7_cv}
+
+\subsection{Model archetypes}
+Silhouette validation selects $k=$ $4$ (silhouette $0.292$) over $k=2,\dots,6$. Table~\ref{tab:archetypes} profiles the clusters: \emph{breakout flagships} (3,445 models; median $\sim$121k downloads, 124 likes), \emph{aging mid-tier} (3,725; $\sim$9.4k downloads, 3.4~years old), \emph{newcomer long tail} (6,239; $\sim$5.0k downloads, under six months old), and \emph{factory long tail} (6,591; publishers averaging $\sim$790 models each but only $\sim$3.8k median downloads (the converter/quantization accounts).
+
+\input{tables/t8_kmeans}
+
+\subsection{Centralization and licensing over time}
+Fig.~\ref{fig:temporal} tracks cohorts by creation year: the top-ten
+organizations' download share falls from 78.6\% for the 2022 cohort to 53.7\% for 2026, while median parameter count rises roughly $100\times$.
+License composition (Table~\ref{tab:license}):
+permissive licenses dominate at $59.5\%$ overall; the restrictive (behavioral-use) share peaked with the 2023--2024 LLM-license wave ($22.5\%$ and $20.6\%$) before receding to $5.2\%$ in 2026 as permissive licensing rebounded to $67.9\%$.
+
+\input{tables/t9_license}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig4_time.png}
+\caption{Top: top-ten organizations' share of cohort downloads by creation
+year. Bottom: median parameter count by creation year (detail subsample).}
+\label{fig:temporal}
+\end{figure}
+
+\section{Discussion}
+The central empirical fact is the asymmetry between two levels of
+concentration. Across models, downloads are extraordinarily concentrated
+(Gini 0.9182); across publishers they are not (HHI 375, below the 1,500
+``moderately concentrated'' line). The open-weight ecosystem is thus best
+described as a \emph{model-level oligopoly inside an organizationally
+competitive market}: thousands of publishers participate, but usage collapses
+onto a few artifacts. Several of the top-downloaded models are embedding and
+reranking workhorses (not flagship chat models), suggesting that much of
+measured ``adoption'' is infrastructural: pipelines pulling the same
+checkpoints millions of times rather than end users choosing models.
+
+This qualifies the rebalancing narrative of the recent full-history census
+\cite{econ-open-intel}. Community publishers contribute $87.3\%$ of sampled models but only $43.9\%$ of downloads; the typical community model sits deep
+in the long tail (median $5{,}856$ downloads) while corporate and research labs
+dominate the head. Openness of publishing coexists with concentration of
+attention, a pattern familiar from open-source software, now quantified for
+model weights.
+
+That breakout status is predictable from metadata alone (random-forest AUC $0.723\pm0.012$ vs.\ 0.50 chance) is both a practical and a cautionary
+finding: registries could surface promising models earlier, but the same
+features that predict adoption (established org, permissive license, age)
+also describe incumbency advantage. The cohort analysis offers modest
+optimism: within newer cohorts the top-ten publisher share falls from 78.6\%
+(2022) to 53.7\% (2026),
+consistent with a slowly diversifying frontier rather than an
+entrenching one.
+
+\emph{Limitations.} This is a cross-sectional snapshot (September 29, 2026)
+of the top 20,000 models by trailing-30-day downloads: it describes the
+head of the distribution at one moment, not the full Hub population of
+millions of repos, and rankings reflect current momentum rather than
+cumulative adoption. Deleted or gated-then-removed models are invisible
+(survivorship bias). Organization type is author-coded from public knowledge,
+not API ground truth, with uncoded orgs defaulting to community. Parameter
+counts cover only the top-2,000 detail subsample at 61.9\% (many GGUF/quantized repos report no \texttt{safetensors.total}); the full-frame
+regressions exclude size. Downloads count pulls, not unique users or
+downstream reuse, and the breakout classifiers use contemporaneous features:
+they are descriptive, not causal or forecasting claims.
+
+\section{Conclusion}
+We measured concentration and adoption in the Hugging Face model ecosystem
+from a reproducible September 2026 snapshot of its most-downloaded models.
+Three facts stand out. First, the ecosystem is a model-level oligopoly
+(Gini $0.918$) inside an organizationally competitive market (HHI $375$):
+thousands publish, but usage collapses onto a few artifacts, often embedding
+and reranking workhorses rather than flagship chat models. Second, adoption
+is structurally legible: publisher type, license class, age, and task explain
+$14.8\%$ of log-download variation, breakout status is predictable from
+metadata (AUC $0.72$), and, strikingly, parameter count predicts slightly
+\emph{fewer} downloads once those factors are held constant, because the
+download head is dominated by small, old, infrastructural models. Third, the
+frontier diversifies slowly: newer cohorts are less publisher-concentrated
+even as models grow roughly $100\times$ larger. For platform designers, the
+implication is that discovery, not publishing, is the scarce resource:
+$87.3\%$ of models come from community publishers but capture only $43.9\%$
+of downloads. For policymakers, ``open weights'' should not be mistaken for
+decentralized influence: a handful of checkpoints mediate a large share of
+real usage, and the licenses attached to those checkpoints (still $59.5\%$
+permissive overall) shape what downstream builders may legally do. Future
+work should move from snapshot to panel: linking trailing downloads to
+cumulative histories and downstream Space reuse would separate momentum from
+installed base.
+
+\begin{thebibliography}{9}
+\footnotesize
+\bibitem{hf-api} Hugging Face. ``Hugging Face Hub API.''
+\url{https://huggingface.co/api/models} (accessed Sept.~29, 2026).
+\bibitem{hf-hub-docs} Hugging Face. ``\texttt{huggingface\_hub} documentation:
+model info and download statistics.''
+\url{https://huggingface.co/docs/huggingface_hub} (accessed Sept.~29, 2026).
+\bibitem{econ-open-intel} ``Economies of Open Intelligence: Tracing Power \&
+Participation in the Model Ecosystem.'' \textit{Hugging Face Papers},
+arXiv:2512.03073, Nov. 2025. [Online]. Available:
+\url{https://huggingface.co/papers/2512.03073}
+\bibitem{hf-lit-review} ``What do we know about Hugging Face? A systematic
+literature review and quantitative validation of qualitative claims.''
+arXiv:2406.08205, 2024. [Online]. Available:
+\url{https://arxiv.org/pdf/2406.08205v1}
+\bibitem{hf-licensing} ``An Empirical Analysis of Machine Learning Model and
+Dataset Documentation, Supply Chain, and Licensing Challenges on Hugging
+Face.'' arXiv:2502.04484, 2025. [Online]. Available:
+\url{https://arxiv.org/pdf/2502.04484}
+\bibitem{hf-reuse} ``Beyond Visibility and Technical Reuse: Public Application
+Transformation in Open-Source Model Ecosystems.'' arXiv:2607.16687, 2026.
+[Online]. Available: \url{https://arxiv.org/pdf/2607.16687}
+\bibitem{breiman} L.~Breiman, ``Random forests,'' \textit{Machine Learning},
+vol.~45, no.~1, pp.~5--32, 2001.
+\bibitem{doj-hhi} U.S.~Dept.~of Justice \& Federal Trade Commission,
+``Horizontal Merger Guidelines,'' 2023. (HHI thresholds: unconcentrated below
+1500, moderately concentrated 1500--2500, highly concentrated above 2500.)
+\end{thebibliography}
+
+\end{document}

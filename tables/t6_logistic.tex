@@ -1,0 +1,21 @@
+\begin{table}[t]
+\caption{Logistic model of breakout adoption (odds ratios; key predictors)}
+\label{tab:logit}
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+Variable & OR & 95\% CI & $p$-value \\
+\midrule
+const & 0.022 & [0.017, 0.030] & 0.0000 \\
+org\_type\_corporate & 3.893 & [3.450, 4.393] & 0.0000 \\
+org\_type\_research & 2.403 & [1.871, 3.088] & 0.0000 \\
+license\_class\_restrictive & 0.505 & [0.420, 0.608] & 0.0000 \\
+tag\_group\_image-text-to-text & 4.113 & [3.424, 4.942] & 0.0000 \\
+tag\_group\_automatic-speech-recognition & 5.765 & [4.532, 7.333] & 0.0000 \\
+log\_age & 1.132 & [1.082, 1.185] & 0.0000 \\
+\bottomrule
+\multicolumn{4}{l}{$n=20000$; breakout $\geq$ 142,251 downloads; pseudo-$R^2=0.092$.} \\
+\end{tabular}
+\normalsize
+\end{table}

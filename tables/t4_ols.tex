@@ -1,0 +1,22 @@
+\begin{table}[t]
+\caption{OLS: $\log(\text{downloads})$ on model attributes (HC3 robust SE; key coefficients)}
+\label{tab:ols}
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+Variable & $\hat\beta$ & SE & $p$-value \\
+\midrule
+const & 8.4327 & 0.0491 & 0.0000 \\
+org\_type\_corporate & 1.2593 & 0.0465 & 0.0000 \\
+org\_type\_research & 0.8842 & 0.1096 & 0.0000 \\
+license\_class\_restrictive & -0.3740 & 0.0339 & 0.0000 \\
+license\_class\_unspecified & -0.0787 & 0.0294 & 0.0073 \\
+tag\_group\_image-text-to-text & 0.9203 & 0.0444 & 0.0000 \\
+tag\_group\_automatic-speech-recognition & 1.3295 & 0.0901 & 0.0000 \\
+log\_age & 0.0681 & 0.0082 & 0.0000 \\
+\bottomrule
+\multicolumn{4}{l}{$n=20000$; $R^2=0.148$; adj.\ $R^2=0.147$. Task dummies n.s.\ omitted.} \\
+\end{tabular}
+\normalsize
+\end{table}

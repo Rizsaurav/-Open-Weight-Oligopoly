@@ -1,0 +1,27 @@
+{
+ "n": 20000,
+ "n_orgs": 4144,
+ "collected_at": "2026-09-29T14:49:26.286817+00:00",
+ "coverage": {
+  "pipeline_tag": 0.6958,
+  "license_tagged": 0.8278,
+  "params": 0.0619,
+  "detail_fetched": 2000
+ },
+ "org_type_counts": {
+  "community": 17461,
+  "corporate": 2132,
+  "research": 407
+ },
+ "license_class_counts": {
+  "permissive": 11903,
+  "unspecified": 3443,
+  "other": 2278,
+  "restrictive": 2215,
+  "copyleft": 161
+ },
+ "year_range": [
+  2022,
+  2026
+ ]
+}
